@@ -1,0 +1,357 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Version>0.0.1</Version>
+    <TargetFrameworks>net472;net6</TargetFrameworks>
+    <Platforms>x64</Platforms>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <LangVersion>10.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <BuildForWindows>false</BuildForWindows>
+    <BuildForWindowsStore>false</BuildForWindowsStore>
+    <ModuleId>$(MSBuildProjectName)</ModuleId>
+    <ModuleName>$(MSBuildProjectName)</ModuleName>
+    <ModuleUrl></ModuleUrl>
+    <GameFolder>$(BANNERLORD_GAME_DIR)</GameFolder>
+    <GameBinariesFolder Condition="Exists('$(GameFolder)\bin\Win64_Shipping_Client\Bannerlord.exe')">Win64_Shipping_Client</GameBinariesFolder>
+    <GameBinariesFolder Condition="Exists('$(GameFolder)\bin\Gaming.Desktop.x64_Shipping_Client\Bannerlord.exe')">Gaming.Desktop.x64_Shipping_Client</GameBinariesFolder>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(TargetFramework) == 'net472'">
+    <BuildForWindows>true</BuildForWindows>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework) == 'net6'">
+    <BuildForWindowsStore>true</BuildForWindowsStore>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="$(GameFolder)\bin\$(GameBinariesFolder)\Newtonsoft.Json.dll">
+      <HintPath>%(Identity)</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>..\..\..\UseDLLs\0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.ButterLib">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.ButterLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.ButterLib.Implementation.1.0.0">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.ButterLib.Implementation.1.0.0.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.ButterLib.Implementation.1.0.1">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.ButterLib.Implementation.1.0.1.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.ButterLib.Implementation.1.0.2">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.ButterLib.Implementation.1.0.2.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.ButterLib.Implementation.1.0.3">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.ButterLib.Implementation.1.0.3.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.ButterLib.Implementation.1.1.0">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.ButterLib.Implementation.1.1.0.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.ButterLib.Implementation.1.1.1">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.ButterLib.Implementation.1.1.1.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.ButterLib.Implementation.1.1.2">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.ButterLib.Implementation.1.1.2.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.ButterLib.Implementation.1.1.3">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.ButterLib.Implementation.1.1.3.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.ButterLib.Implementation.1.1.4">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.ButterLib.Implementation.1.1.4.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.ButterLib.Implementation.1.1.5">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.ButterLib.Implementation.1.1.5.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.ButterLib.Implementation.1.1.6">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.ButterLib.Implementation.1.1.6.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.ButterLib.Implementation.1.2.10">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.ButterLib.Implementation.1.2.10.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.ButterLib.Implementation.1.2.11">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.ButterLib.Implementation.1.2.11.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.ButterLib.Implementation.1.2.12">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.ButterLib.Implementation.1.2.12.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.ButterLib.Implementation.1.2.4">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.ButterLib.Implementation.1.2.4.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.ButterLib.Implementation.1.2.5">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.ButterLib.Implementation.1.2.5.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.ButterLib.Implementation.1.2.6">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.ButterLib.Implementation.1.2.6.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.ButterLib.Implementation.1.2.7">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.ButterLib.Implementation.1.2.7.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.ButterLib.Implementation.1.2.8">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.ButterLib.Implementation.1.2.8.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.ButterLib.Implementation.1.2.9">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.ButterLib.Implementation.1.2.9.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.ButterLib.Implementation.1.3.4">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.ButterLib.Implementation.1.3.4.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.ButterLib.Implementation.1.3.5">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.ButterLib.Implementation.1.3.5.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.ButterLib.Implementation.1.3.6">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.ButterLib.Implementation.1.3.6.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.ButterLib.Implementation.1.3.7">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.ButterLib.Implementation.1.3.7.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.ButterLib.Implementation.1.3.8">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.ButterLib.Implementation.1.3.8.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.ButterLib.Implementation.1.3.9">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.ButterLib.Implementation.1.3.9.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.Harmony">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.MBOptionScreen.v1.0.0">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.MBOptionScreen.v1.0.0.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.MBOptionScreen.v1.0.1">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.MBOptionScreen.v1.0.1.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.MBOptionScreen.v1.0.2">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.MBOptionScreen.v1.0.2.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.MBOptionScreen.v1.0.3">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.MBOptionScreen.v1.0.3.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.MBOptionScreen.v1.1.0">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.MBOptionScreen.v1.1.0.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.MBOptionScreen.v1.1.1">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.MBOptionScreen.v1.1.1.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.MBOptionScreen.v1.1.2">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.MBOptionScreen.v1.1.2.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.MBOptionScreen.v1.1.3">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.MBOptionScreen.v1.1.3.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.MBOptionScreen.v1.1.4">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.MBOptionScreen.v1.1.4.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.MBOptionScreen.v1.1.5">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.MBOptionScreen.v1.1.5.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.MBOptionScreen.v1.1.6">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.MBOptionScreen.v1.1.6.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.MBOptionScreen.v1.2.10">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.MBOptionScreen.v1.2.10.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.MBOptionScreen.v1.2.11">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.MBOptionScreen.v1.2.11.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.MBOptionScreen.v1.2.12">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.MBOptionScreen.v1.2.12.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.MBOptionScreen.v1.2.4">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.MBOptionScreen.v1.2.4.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.MBOptionScreen.v1.2.5">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.MBOptionScreen.v1.2.5.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.MBOptionScreen.v1.2.6">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.MBOptionScreen.v1.2.6.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.MBOptionScreen.v1.2.7">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.MBOptionScreen.v1.2.7.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.MBOptionScreen.v1.2.8">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.MBOptionScreen.v1.2.8.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.MBOptionScreen.v1.2.9">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.MBOptionScreen.v1.2.9.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.MBOptionScreen.v1.3.4">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.MBOptionScreen.v1.3.4.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.MBOptionScreen.v1.3.5">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.MBOptionScreen.v1.3.5.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.MBOptionScreen.v1.3.6">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.MBOptionScreen.v1.3.6.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.MBOptionScreen">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.ModuleLoader.Bannerlord.MBOptionScreen.dll</HintPath>
+    </Reference>
+    <Reference Include="Bannerlord.UIExtenderEx">
+      <HintPath>..\..\..\UseDLLs\Bannerlord.UIExtenderEx.dll</HintPath>
+    </Reference>
+    <Reference Include="BUTR.CrashReport">
+      <HintPath>..\..\..\UseDLLs\BUTR.CrashReport.dll</HintPath>
+    </Reference>
+    <Reference Include="BUTR.CrashReport.Models">
+      <HintPath>..\..\..\UseDLLs\BUTR.CrashReport.Models.dll</HintPath>
+    </Reference>
+    <Reference Include="BUTR.CrashReport.Renderer.Html">
+      <HintPath>..\..\..\UseDLLs\BUTR.CrashReport.Renderer.Html.dll</HintPath>
+    </Reference>
+    <Reference Include="BUTR.CrashReport.Renderer.ImGui">
+      <HintPath>..\..\..\UseDLLs\BUTR.CrashReport.Renderer.ImGui.dll</HintPath>
+    </Reference>
+    <Reference Include="BUTR.CrashReport.Renderer.WinForms">
+      <HintPath>..\..\..\UseDLLs\BUTR.CrashReport.Renderer.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="BUTR.CrashReport.Renderer.Zip">
+      <HintPath>..\..\..\UseDLLs\BUTR.CrashReport.Renderer.Zip.dll</HintPath>
+    </Reference>
+    <Reference Include="MCM.UI.Adapter.MCMv5">
+      <HintPath>..\..\..\UseDLLs\MCM.UI.Adapter.MCMv5.dll</HintPath>
+    </Reference>
+    <Reference Include="MCMv5">
+      <HintPath>..\..\..\UseDLLs\MCMv5.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Bcl.HashCode">
+      <HintPath>..\..\..\UseDLLs\Microsoft.Bcl.HashCode.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection">
+      <HintPath>..\..\..\UseDLLs\Microsoft.Extensions.DependencyInjection.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
+      <HintPath>..\..\..\UseDLLs\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging">
+      <HintPath>..\..\..\UseDLLs\Microsoft.Extensions.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions">
+      <HintPath>..\..\..\UseDLLs\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Options">
+      <HintPath>..\..\..\UseDLLs\Microsoft.Extensions.Options.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Primitives">
+      <HintPath>..\..\..\UseDLLs\Microsoft.Extensions.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil">
+      <HintPath>..\..\..\UseDLLs\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Mdb">
+      <HintPath>..\..\..\UseDLLs\Mono.Cecil.Mdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Pdb">
+      <HintPath>..\..\..\UseDLLs\Mono.Cecil.Pdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Rocks">
+      <HintPath>..\..\..\UseDLLs\Mono.Cecil.Rocks.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoMod.Backports">
+      <HintPath>..\..\..\UseDLLs\MonoMod.Backports.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoMod.Core">
+      <HintPath>..\..\..\UseDLLs\MonoMod.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoMod.Iced">
+      <HintPath>..\..\..\UseDLLs\MonoMod.Iced.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoMod.ILHelpers">
+      <HintPath>..\..\..\UseDLLs\MonoMod.ILHelpers.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoMod.Utils">
+      <HintPath>..\..\..\UseDLLs\MonoMod.Utils.dll</HintPath>
+    </Reference>
+    <Reference Include="NavalDLC">
+      <HintPath>..\..\..\UseDLLs\NavalDLC.dll</HintPath>
+    </Reference>
+    <Reference Include="NavalDLC.CustomBattle">
+      <HintPath>..\..\..\UseDLLs\NavalDLC.CustomBattle.dll</HintPath>
+    </Reference>
+    <Reference Include="NavalDLC.GauntletUI">
+      <HintPath>..\..\..\UseDLLs\NavalDLC.GauntletUI.dll</HintPath>
+    </Reference>
+    <Reference Include="NavalDLC.GauntletUI.AutoGenerated">
+      <HintPath>..\..\..\UseDLLs\NavalDLC.GauntletUI.AutoGenerated.dll</HintPath>
+    </Reference>
+    <Reference Include="NavalDLC.GauntletUI.Widgets">
+      <HintPath>..\..\..\UseDLLs\NavalDLC.GauntletUI.Widgets.dll</HintPath>
+    </Reference>
+    <Reference Include="NavalDLC.View">
+      <HintPath>..\..\..\UseDLLs\NavalDLC.View.dll</HintPath>
+    </Reference>
+    <Reference Include="NavalDLC.ViewModelCollection">
+      <HintPath>..\..\..\UseDLLs\NavalDLC.ViewModelCollection.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog">
+      <HintPath>..\..\..\UseDLLs\Serilog.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.Extensions.Logging">
+      <HintPath>..\..\..\UseDLLs\Serilog.Extensions.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.Sinks.File">
+      <HintPath>..\..\..\UseDLLs\Serilog.Sinks.File.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Buffers">
+      <HintPath>..\..\..\UseDLLs\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Collections.Immutable">
+      <HintPath>..\..\..\UseDLLs\System.Collections.Immutable.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Memory">
+      <HintPath>..\..\..\UseDLLs\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics.Vectors">
+      <HintPath>..\..\..\UseDLLs\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reflection.Metadata">
+      <HintPath>..\..\..\UseDLLs\System.Reflection.Metadata.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe">
+      <HintPath>..\..\..\UseDLLs\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ValueTuple">
+      <HintPath>..\..\..\UseDLLs\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="$(GameFolder)\bin\$(GameBinariesFolder)\TaleWorlds.*.dll" Exclude="$(GameFolder)\bin\$(GameBinariesFolder)\TaleWorlds.Native.dll">
+      <HintPath>%(Identity)</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="$(GameFolder)\Modules\Native\bin\$(GameBinariesFolder)\*.dll">
+      <HintPath>%(Identity)</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="$(GameFolder)\Modules\SandBox\bin\$(GameBinariesFolder)\*.dll">
+      <HintPath>%(Identity)</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="$(GameFolder)\Modules\SandBoxCore\bin\$(GameBinariesFolder)\*.dll">
+      <HintPath>%(Identity)</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="$(GameFolder)\Modules\StoryMode\bin\$(GameBinariesFolder)\*.dll">
+      <HintPath>%(Identity)</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="$(GameFolder)\Modules\CustomBattle\bin\$(GameBinariesFolder)\*.dll">
+      <HintPath>%(Identity)</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="$(GameFolder)\Modules\BirthAndDeath\bin\$(GameBinariesFolder)\*.dll">
+      <HintPath>%(Identity)</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Nullable" Version="1.3.1" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+    <PackageReference Include="IsExternalInit" Version="1.0.3" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+    <PackageReference Include="Bannerlord.BuildResources" Version="1.1.0.124" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+    <PackageReference Include="Lib.Harmony" Version="2.3.3" IncludeAssets="compile" />
+    <PackageReference Include="Harmony.Extensions" Version="3.2.0.77" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+    <PackageReference Include="BUTR.Harmony.Analyzer" Version="1.0.1.50" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+  </ItemGroup>
+
+</Project>
