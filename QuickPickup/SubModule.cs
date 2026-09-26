@@ -20,16 +20,14 @@ namespace QuickPickup
         public override void OnMissionBehaviorInitialize(Mission mission)
         {
             base.OnMissionBehaviorInitialize(mission);
-
-            // 初始化 Harmony 并应用所有补丁
-            var harmony = new Harmony("mod.autoammopickup");
-
-            harmony.PatchAll();
+            mission.AddMissionBehavior(new BatchPickupMissionLogic());
         }
         protected override void OnSubModuleLoad()
         {
             base.OnSubModuleLoad();
             AutoAmmoPickupSettings.Load();
+            _harmony = new Harmony("mod.autoammopickup");
+            _harmony.PatchAll();
         }
         
 

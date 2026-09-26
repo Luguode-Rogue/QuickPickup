@@ -13,15 +13,59 @@ namespace QuickPickup
     [HarmonyPatch(typeof(SpawnedItemEntity), "OnUseStopped")]
     public class Patch_SpawnedItemEntity_OnUseStopped
     {
-        static void Postfix(SpawnedItemEntity __instance, Agent userAgent, bool isSuccessful, int preferenceIndex)
+        static void Prefix(SpawnedItemEntity __instance, bool isSuccessful, out Vec3 __state)
         {
-            if (!isSuccessful || userAgent == null) return;
+            // OnUseStopped may remove the script component. Capture only its position before that happens.
+            __state = isSuccessful ? __instance.GameEntity.GlobalPosition : Vec3.Zero;
+        }
 
-            var pickedWeapon = __instance.WeaponCopy;
-            if (pickedWeapon.IsEmpty) return;
+        static void Postfix(Agent userAgent, bool isSuccessful, Vec3 __state)
+        {
+            if (!isSuccessful || userAgent == null || GameNetwork.IsClientOrReplay) return;
+            BatchPickupMissionLogic.Enqueue(userAgent, __state);
+        }
+    }
 
+    public sealed class BatchPickupMissionLogic : MissionLogic
+    {
+        private static readonly object PendingLock = new object();
+        private static readonly Queue<PickupRequest> Pending = new Queue<PickupRequest>();
+
+        internal static void Enqueue(Agent agent, Vec3 center)
+        {
+            lock (PendingLock)
+                Pending.Enqueue(new PickupRequest(agent, center));
+        }
+
+        public override void OnMissionTick(float dt)
+        {
+            base.OnMissionTick(dt);
+            if (GameNetwork.IsClientOrReplay) return;
+
+            PickupRequest[] requests;
+            lock (PendingLock)
+            {
+                requests = Pending.ToArray();
+                Pending.Clear();
+            }
+            foreach (PickupRequest request in requests)
+            {
+                if (request.Agent != null && request.Agent.IsActive())
+                    ProcessBatch(request.Agent, request.Center);
+            }
+        }
+
+        protected override void OnEndMission()
+        {
+            lock (PendingLock)
+                Pending.Clear();
+            base.OnEndMission();
+        }
+
+        private static void ProcessBatch(Agent userAgent, Vec3 center)
+        {
             var settings = AutoAmmoPickupSettings.Instance;
-            Vec3 center = __instance.GameEntity.GlobalPosition;
+            if (settings == null || !settings.OnlyAmmo) return;
             var scene = Mission.Current.Scene;
 
             WeakGameEntity[] buffer = new WeakGameEntity[128];
@@ -38,10 +82,11 @@ namespace QuickPickup
             {
                 var weak = buffer[i];
                 var groundEntity = weak.GetFirstScriptOfType<SpawnedItemEntity>();
-                if (groundEntity == null || groundEntity.IsRemoved || groundEntity == __instance) continue;
+                if (groundEntity == null || groundEntity.IsRemoved || groundEntity.IsDeactivated ||
+                    groundEntity.HasUser || groundEntity.HasAIMovingTo) continue;
 
                 var groundWeapon = groundEntity.WeaponCopy;
-                if (groundWeapon.IsEmpty) continue;
+                if (groundWeapon.IsEmpty || groundWeapon.Amount <= 0) continue;
 
                 // 检查是否是弹药类物品
                 if (settings.OnlyAmmo && !IsAmmoLike(groundWeapon)) continue;
@@ -49,7 +94,8 @@ namespace QuickPickup
                 // 尝试让触发者拾取
                 if (TryPickupForAgent(userAgent, groundEntity, groundWeapon, settings))
                 {
-                    //InformationManager.DisplayMessage(new InformationMessage($"[QPickup] SELF: {userAgent.Name} takes {groundWeapon.Item.Name}"));
+                    if (groundEntity.WeaponCopy.Amount > 0)
+                        remainingItems.Add(groundEntity);
                 }
                 else
                 {
@@ -65,24 +111,39 @@ namespace QuickPickup
                 foreach (var teamAgent in teammates)
                 {
                     // 跳过自身（已在第一阶段处理）
-                    if (teamAgent == userAgent) continue;
+                    if (teamAgent == null || teamAgent == userAgent || !teamAgent.IsActive()) continue;
 
                     // 检查队友是否在拾取范围内
                     if (teamAgent.Position.Distance(center) > settings.Radius) continue;
 
                     foreach (var groundEntity in remainingItems.ToList())
                     {
+                        if (groundEntity.IsRemoved || groundEntity.IsDeactivated ||
+                            groundEntity.HasUser || groundEntity.HasAIMovingTo) continue;
                         var groundWeapon = groundEntity.WeaponCopy;
-                        if (groundWeapon.IsEmpty) continue;
+                        if (groundWeapon.IsEmpty || groundWeapon.Amount <= 0) continue;
 
                         if (TryPickupForAgent(teamAgent, groundEntity, groundWeapon, settings))
                         {
                             //InformationManager.DisplayMessage(new InformationMessage($"[QPickup] TEAM: {teamAgent.Name} takes {groundWeapon.Item.Name}"));
-                            remainingItems.Remove(groundEntity); // 移除已拾取的物品
+                            if (groundEntity.WeaponCopy.Amount == 0)
+                                remainingItems.Remove(groundEntity);
                             break; // 拾取成功后跳出当前物品循环
                         }
                     }
                 }
+            }
+        }
+
+        private readonly struct PickupRequest
+        {
+            public readonly Agent Agent;
+            public readonly Vec3 Center;
+
+            public PickupRequest(Agent agent, Vec3 center)
+            {
+                Agent = agent;
+                Center = center;
             }
         }
 
@@ -111,6 +172,10 @@ namespace QuickPickup
         // 尝试为指定代理拾取物品
         private static bool TryPickupForAgent(Agent agent, SpawnedItemEntity groundEntity, MissionWeapon groundWeapon, AutoAmmoPickupSettings settings)
         {
+            if (agent == null || !agent.IsActive() || groundEntity == null || groundEntity.IsRemoved ||
+                groundEntity.IsDeactivated || groundEntity.HasUser || groundEntity.HasAIMovingTo)
+                return false;
+
             if (settings.OnlyAmmo)
             {
                 if (!IsAmmoLike(groundWeapon)) return false;
@@ -122,37 +187,31 @@ namespace QuickPickup
                 return false;
             }
 
-            var compatibleSlots = GetCompatibleAmmoSlots(agent, groundWeapon.Item);
-            int totalCurrentAmmo = 0;
-            int totalMaxAmmo = 0;
-
-            foreach (var slot in compatibleSlots)
+            bool transferred = false;
+            foreach (var slot in GetCompatibleAmmoSlots(agent, groundWeapon.Item))
             {
-                totalCurrentAmmo += agent.Equipment[slot].Amount;
-                totalMaxAmmo += agent.Equipment[slot].MaxAmmo;
-            }
+                MissionWeapon equipped = agent.Equipment[slot];
+                if (!equipped.IsSameType(groundWeapon)) continue;
 
-            if (totalCurrentAmmo >= totalMaxAmmo) return false;
+                int available = groundEntity.WeaponCopy.Amount;
+                int capacity = equipped.ModifiedMaxAmount - equipped.Amount;
+                if (available <= 0 || capacity <= 0) continue;
 
-            // 找到第一个有空间的槽位进行拾取
-            foreach (var slot in compatibleSlots)
-            {
-                int slotCurrent = agent.Equipment[slot].Amount;
-                int slotMax = agent.Equipment[slot].MaxAmmo;
+                short amount = (short)Math.Min(available, capacity);
+                agent.SetWeaponAmountInSlot(slot, (short)(equipped.Amount + amount), true);
+                groundEntity.ConsumeWeaponAmount(amount);
+                transferred = true;
 
-                if (slotCurrent < slotMax)
+                if (groundEntity.WeaponCopy.Amount == 0)
                 {
-                    if (groundEntity == null || groundEntity.IsRemoved) return false;
-                    agent.OnItemPickup(groundEntity, slot, out bool success);
-                    if (success)
-                    {
-                        groundEntity.RequestDeletionOnNextTick();
-                        return true;
-                    }
+                    // Keep the script valid until the engine removes the empty stack on a later tick.
+                    groundEntity.HasLifeTime = true;
+                    groundEntity.RequestDeletionOnNextTick();
+                    break;
                 }
             }
 
-            return false;
+            return transferred;
         }
 
         // 以下方法保持不变
